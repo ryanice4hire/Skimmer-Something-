@@ -59,11 +59,11 @@ if "To3l_M" in sys.argv[1]:
     isSignal = 1
 
 if isSignal==1:
-	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/"+dataset+".root"
+	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/control_sel/"+dataset+".root"
 elif isMC=="1":
-	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal_sel/"+dataset+".root"
+	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/control_sel/"+dataset+".root"
 else:
-	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/signal_sel/"+dataset+".root"
+	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/control_sel/"+dataset+".root"
 f_out = TFile(out_file,'RECREATE')
 out_tree = TTree("passedEvents","Events that passed skimmer")
 
