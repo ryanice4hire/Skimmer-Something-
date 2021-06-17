@@ -24,4 +24,4 @@
 rm -f /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/control_sel/total_data.root
 rm -f /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/control_sel/total_data_no_dupe.root
 hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/control_sel/total_data.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/control_sel/*.root
-root -l removeDuplicates/removeDuplicates.C\(\"/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/control_sel/total_data.root\",\"/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/control_sel/total_data_no_dupe.root\"\)
+root -l removeDuplicates.C\(\"/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/control_sel/total_data.root\",\"/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/control_sel/total_data_no_dupe.root\"\)

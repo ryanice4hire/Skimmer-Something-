@@ -18,13 +18,13 @@
 #hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/data_wto3l/2017/DoubleMuon.root /cmsuf/data/store/user/nimenend/NanoAOD/Data/DoubleMuon/*/210529*/*/*.root
 #hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/data_wto3l/testing/old_MuonEG.root /cmsuf/data/store/user/nimenend/NanoAOD/Data/MuonEG/*/2105*/*/*.root
 
-rm /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/WTo3l_M*.root
-hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/WTo3l_M4.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/W*To3l_M4.root
-hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/WTo3l_M5.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/W*To3l_M5.root
-hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/WTo3l_M10.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/W*To3l_M10.root
-hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/WTo3l_M15.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/W*To3l_M15.root
-hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/WTo3l_M30.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/W*To3l_M30.root
-hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/WTo3l_M60.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/W*To3l_M60.root
+#rm /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/WTo3l_M*.root
+#hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/WTo3l_M4.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/W*To3l_M4.root
+#hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/WTo3l_M5.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/W*To3l_M5.root
+#hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/WTo3l_M10.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/W*To3l_M10.root
+#hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/WTo3l_M15.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/W*To3l_M15.root
+#hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/WTo3l_M30.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/W*To3l_M30.root
+#hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/WTo3l_M60.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/pt/W*To3l_M60.root
 
 #rm /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/WTo3l_M*.root
 #hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/WTo3l_M4.root /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/W*To3l_M4.root
@@ -40,3 +40,5 @@ hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal
 #hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/data_wto3l/2017/DoubleMuon_E.root /cmsuf/data/store/user/nimenend/NanoAOD/Data/DoubleMuon/*E/210529*/*/*.root
 #hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/data_wto3l/2017/DoubleMuon_F.root /cmsuf/data/store/user/nimenend/NanoAOD/Data/DoubleMuon/*F/210529*/*/*.root
 #hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/data_wto3l/testing/separated_DoubleMuon.root /cmsuf/data/store/user/t2/users/nikmenendez/data_wto3l/testing/DoubleMuon_*.root
+
+hadd -fk /cmsuf/data/store/user/t2/users/nikmenendez/signal/Wto3l_M5_Full.root /cmsuf/data/store/user/nimenend/SignalGeneration/CRAB_PrivateMC/W*To3l_M5/2106*/0000/*.root

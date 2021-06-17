@@ -69,7 +69,8 @@ MET_phi = events["MET_phi"].array()
 #passedTrig = events["HLT_TripleMu_10_5_5_DZ"].array() | events["HLT_TripleMu_12_10_5"].array()
 #passedTrig = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL"].array() | events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ"].array() | events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array()
 #passedTrig = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL"].array() | events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ"].array() | events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array() | events["HLT_TripleMu_10_5_5_DZ"].array() | events["HLT_TripleMu_12_10_5"].array()
-passedTrig = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array() | events["HLT_TripleMu_10_5_5_DZ"].array() | events["HLT_TripleMu_12_10_5"].array()
+#passedTrig = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array() | events["HLT_TripleMu_10_5_5_DZ"].array() | events["HLT_TripleMu_12_10_5"].array()
+passedTrig = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array()
 
 nEntries = len(nMuon)
 

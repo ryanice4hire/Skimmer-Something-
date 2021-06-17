@@ -49,21 +49,23 @@ mt			= array('f', [0.])
 met			= array('f', [0.])
 met_phi		= array('f', [0.])
 genWeight	= array('f', [0.])
-passedTrig  = array('i', [0])
+passedDiMu  = array('i', [0])
+passedTriMu = array('i', [0])
 
 #dataset = "WJetsToLNu"
 dataset = str(sys.argv[1])
 isMC = sys.argv[2]
+sort_by = str(sys.argv[3])
 isSignal = 0
 if "To3l_M" in sys.argv[1]:
     isSignal = 1
 
 if isSignal==1:
-	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/"+dataset+".root"
+	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/"+sort_by+"/"+dataset+".root"
 elif isMC=="1":
-	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal_sel/"+dataset+".root"
+	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/background/signal_sel/"+sort_by+"/"+dataset+".root"
 else:
-	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/signal_sel/"+dataset+".root"
+	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/signal_sel/"+sort_by+"/"+dataset+".root"
 f_out = TFile(out_file,'RECREATE')
 out_tree = TTree("passedEvents","Events that passed skimmer")
 
@@ -112,4 +114,5 @@ out_tree.Branch("mt",mt,"mt/F");
 out_tree.Branch("met",met,"met/F");
 out_tree.Branch("met_phi",met_phi,"met_phi/F");
 out_tree.Branch("genWeight",genWeight,"genWeight/F");
-out_tree.Branch("passedTrig",passedTrig,"passedTrig/I");
+out_tree.Branch("passedDiMu",passedDiMu,"passedDiMu/I");
+out_tree.Branch("passedTriMu",passedTriMu,"passedTriMu/I");

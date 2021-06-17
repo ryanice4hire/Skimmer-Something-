@@ -9,22 +9,23 @@ from Utils.DeltaR import deltaR
 
 dataset = str(sys.argv[1])
 isMC = sys.argv[2]
+sort_by = str(sys.argv[3])
 isSignal = 0
-if "To3l_M" in sys.argv[1]:
+if "To3l_M" in sys.argv[1] or "to3l_M" in sys.argv[1]:
 	isSignal = 1
 in_file = ""
 out_file = ""
 if isSignal==1:
 	in_file = "/cmsuf/data/store/user/t2/users/nikmenendez/signal/NanoAOD/"+dataset+".root"
-	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/"+dataset+".root"
-	sumW_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/"+dataset+".txt"
+	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/"+sort_by+"/"+dataset+".root"
+	sumW_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/"+sort_by+"/"+dataset+".txt"
 elif isMC=="1":
 	in_file = "/cmsuf/data/store/user/t2/users/nikmenendez/2017_MC_bkg/NanoAOD/"+dataset+".root"
-	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal_sel/"+dataset+".root"
-	sumW_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal_sel/"+dataset+".txt"
+	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/background/signal_sel/"+sort_by+"/"+dataset+".root"
+	sumW_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/background/signal_sel/"+sort_by+"/"+dataset+".txt"
 else:
 	in_file = "/cmsuf/data/store/user/t2/users/nikmenendez/data_wto3l/2017/"+dataset+".root"
-	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/signal_sel/"+dataset+".root"
+	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/signal_sel/"+sort_by+"/"+dataset+".root"
 
 print("Skimming file %s"%(in_file))
 
@@ -66,10 +67,14 @@ lep_sip = events["Muon_sip3d"].array()
 MET = events["MET_pt"].array()
 MET_phi = events["MET_phi"].array()
 
-#passedTrig = events["HLT_TripleMu_10_5_5_DZ"].array() | events["HLT_TripleMu_12_10_5"].array()
-#passedTrig = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL"].array() | events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ"].array() | events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array()
-#passedTrig = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL"].array() | events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ"].array() | events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array() | events["HLT_TripleMu_10_5_5_DZ"].array() | events["HLT_TripleMu_12_10_5"].array()
-passedTrig = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array() | events["HLT_TripleMu_10_5_5_DZ"].array() | events["HLT_TripleMu_12_10_5"].array()
+passedDiMu = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array()
+passedTriMu = events["HLT_TripleMu_10_5_5_DZ"].array() | events["HLT_TripleMu_12_10_5"].array()
+passedTrig = passedDiMu | passedTriMu
+
+if isSignal==1:
+	gen_id = events["GenPart_pdgId"].array()
+	gen_eta = events["GenPart_eta"].array()
+	gen_pt = events["GenPart_pt"].array()
 
 nEntries = len(nMuon)
 
@@ -78,21 +83,40 @@ if isMC=="1":
 else:
 	print("Skimming %i events."%(nEntries))
 
+#Find acceptance of signal
+left0 = nEntries
+selection = nMuon >= 0
+if isSignal==1:
+	for ev in tqdm(range(len(gen_id))):
+		m_found = 0
+		gen = np.unique(np.array([gen_id[ev],gen_eta[ev],gen_pt[ev]]), axis=1)
+		for i in range(len(gen[0])):
+			if abs(gen[0][i])==13 and abs(gen[1][i])<=2.4 and gen[2][i]>=2.5: 
+				#if i>0 and gen_id[ev][i]==gen_id[ev][i-1] and gen_eta[ev][i]==gen_eta[ev][i-1] and gen_pt[ev][i]==gen_pt[ev][i-1]: continue
+				m_found+=1
+		if m_found<3: selection[ev] = False
+		#if selection[ev] and nMuon[ev] < 3:
+		#	for i in range(len(gen_id[ev])):
+		#		if abs(gen_id[ev][i])==13:
+		#			print("id= %i, eta= %.3f, pt= %.3f"%(gen_id[ev][i],gen_eta[ev][i],gen_pt[ev][i]))
+		#	print("Found %i muons in acceptance"%(m_found))
+		#	print("Found %i muons in event"%(nMuon[ev]))
+		#	print("***************************")
+	left0 = np.count_nonzero(selection)
+
 #Begin selection
-selection = nMuon >= 3
+selection *= nMuon >= 3
 left1 = np.count_nonzero(selection)
-#print(np.count_nonzero(selection)/len(selection)*100)
 selection *= passedTrig
 left2 = np.count_nonzero(selection)
-#print(np.count_nonzero(selection)/len(selection)*100)
 for ev in tqdm(range(len(nMuon))):
 	if not selection[ev]: continue
 	
 	# Check different charged muon
 	nmp, nmm = 0, 0
 	for j in range(len(lep_id[ev])):
-		if lep_id[ev][j] > 0: nmp+=1
-		if lep_id[ev][j] < 0: nmm+=1
+		if lep_id[ev][j] == 13: nmp+=1
+		if lep_id[ev][j] == -13: nmm+=1
 	if not (nmp>=1 and nmm>=1): selection[ev] = False
 	if not selection[ev]: continue
 
@@ -186,20 +210,36 @@ for ev in tqdm(range(len(nMuon))):
 	lep2 = TLorentzVector()
 	lep3 = TLorentzVector()
 
+	indexes = [index1,index2,index3]
+	sorter = np.array([0,0,0])
+	if sort_by=="pt":
+		sorter = np.array([lep_pt[ev][index1],lep_pt[ev][index2],lep_pt[ev][index3]])
+	elif sort_by=="iso":
+		sorter = np.array([lep_iso[ev][index1],lep_iso[ev][index2],lep_iso[ev][index3]])
+	elif sort_by=="ip":
+		sorter = np.array([lep_ip[ev][index1],lep_ip[ev][index2],lep_ip[ev][index3]])
+	elif sort_by=="sip":
+		sorter = np.array([lep_sip[ev][index1],lep_sip[ev][index2],lep_sip[ev][index3]])
+
+	done_sort = np.argsort(sorter)
+	index1 = indexes[done_sort[2]]
+	index2 = indexes[done_sort[1]]
+	index3 = indexes[done_sort[0]]
+
 	#Order muons by pT
-	leading = index1
-	subleading = index2
-	trailing = index3
-	if lep_pt[ev][index1] < lep_pt[ev][index3]:
-		leading = index3
-		subleading = index1
-		trailing = index2
-	elif lep_pt[ev][index2] < lep_pt[ev][index3]:
-		subleading = index3
-		trailing = index2
-	index1 = leading
-	index2 = subleading
-	index3 = trailing
+	#leading = index1
+	#subleading = index2
+	#trailing = index3
+	#if lep_pt[ev][index1] < lep_pt[ev][index3]:
+	#	leading = index3
+	#	subleading = index1
+	#	trailing = index2
+	#elif lep_pt[ev][index2] < lep_pt[ev][index3]:
+	#	subleading = index3
+	#	trailing = index2
+	#index1 = leading
+	#index2 = subleading
+	#index3 = trailing
 
 	#Create lepton vectors
 	lep1.SetPtEtaPhiM(lep_pt[ev][index1],lep_eta[ev][index1],lep_phi[ev][index1],lep_mass[ev][index1])
@@ -238,7 +278,8 @@ for ev in tqdm(range(len(nMuon))):
 	
 	if isMC=="1": ot.genWeight[0] = genWeight[ev]
 	
-	ot.passedTrig[0] = passedTrig[ev]
+	ot.passedDiMu[0] = passedDiMu[ev]
+	ot.passedTriMu[0] = passedTriMu[ev]
 	
 	ot.out_tree.Fill()
 
@@ -251,7 +292,8 @@ left3 = np.count_nonzero(selection)
 print("Efficiencies for each cut")
 print("=====================================================")
 print("Total events before cuts: %i"%(nEntries))
-print("Pass 3 muon cut: %i. Efficiency = %.2f%%"%(left1,left1/nEntries*100))
+if isSignal==1: print("In acceptance: %i. Efficiency = %.2f%%"%(left0,left0/nEntries))
+print("Pass 3 muon cut: %i. Efficiency = %.2f%%"%(left1,left1/left0*100))
 print("Pass Trigger: %i. Efficiency = %.2f%%"%(left2,left2/left1*100))
 print("Found Z candidate: %i. Efficiency = %.2f%%"%(left3,left3/left2*100))
 print("=====================================================")
