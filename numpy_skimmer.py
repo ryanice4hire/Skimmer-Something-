@@ -13,8 +13,11 @@ sort_by = str(sys.argv[3])
 isSignal = 0
 if "To3l_M" in sys.argv[1] or "to3l_M" in sys.argv[1]:
 	isSignal = 1
-in_file = ""
-out_file = ""
+
+
+
+#in_file = ["/eos/user/d/dsperka/mc/zp_2mu2nu_SB/NanoAOD_6218185." + str(x) + '.root' for x in range(1,100)]
+#out_file = ""
 if isSignal==1:
 	in_file = "/cmsuf/data/store/user/t2/users/nikmenendez/signal/NanoAOD/"+dataset+".root"
 	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/signal/signal_sel/"+sort_by+"/"+dataset+".root"
@@ -26,6 +29,15 @@ elif isMC=="1":
 else:
 	in_file = "/cmsuf/data/store/user/t2/users/nikmenendez/data_wto3l/2017/"+dataset+".root"
 	out_file = "/cmsuf/data/store/user/t2/users/nikmenendez/skimmed/NanoAOD/2017/data/signal_sel/"+sort_by+"/"+dataset+".root"
+
+#in_file = "/afs/cern.ch/user/h/hinguyen/D03C6AE0-73AD-A940-B8CA-779A621D4853_Skim.root"
+
+#in_file = "/afs/cern.ch/work/d/dsperka/public/forHieu/250D3DC4-9180-4A4D-A9F3-823FB8CA82D2-3bc061d71d13fe34_Skim.root"
+#out_file = "/afs/cern.ch/user/h/hinguyen/BackgroundSkimmed.root"
+in_file = "/eos/user/h/hinguyen/CMSSW_10_2_15/src/PhysicsTools/NanoAODTools/python/postprocessing/analysis/Wto3l_NanoAOD_Processor/BigBackgroundPostproc.root"
+#in_file = "/eos/user/h/hinguyen/SignalPostprocG01.root"
+#out_file = "/eos/user/h/hinguyen/SignalSkimmedG01.root"
+out_file = "/eos/user/h/hinguyen/BigBackgroundSkimmed.root"
 
 print("Skimming file %s"%(in_file))
 
@@ -69,7 +81,7 @@ MET_phi = events["MET_phi"].array()
 
 passedDiMu = events["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"].array()
 passedTriMu = events["HLT_TripleMu_10_5_5_DZ"].array() | events["HLT_TripleMu_12_10_5"].array()
-passedTrig = passedDiMu | passedTriMu
+passedTrig = passedDiMu
 
 if isSignal==1:
 	gen_id = events["GenPart_pdgId"].array()
@@ -94,7 +106,7 @@ if isSignal==1:
 			if abs(gen[0][i])==13 and abs(gen[1][i])<=2.4 and gen[2][i]>=2.5: 
 				#if i>0 and gen_id[ev][i]==gen_id[ev][i-1] and gen_eta[ev][i]==gen_eta[ev][i-1] and gen_pt[ev][i]==gen_pt[ev][i-1]: continue
 				m_found+=1
-		if m_found<3: selection[ev] = False
+		if m_found<2: selection[ev] = False
 		#if selection[ev] and nMuon[ev] < 3:
 		#	for i in range(len(gen_id[ev])):
 		#		if abs(gen_id[ev][i])==13:
@@ -105,7 +117,7 @@ if isSignal==1:
 	left0 = np.count_nonzero(selection)
 
 #Begin selection
-selection *= nMuon >= 3
+selection *= nMuon >= 2
 left1 = np.count_nonzero(selection)
 selection *= passedTrig
 left2 = np.count_nonzero(selection)
@@ -121,12 +133,12 @@ for ev in tqdm(range(len(nMuon))):
 	if not selection[ev]: continue
 
 	#Define needed variables
-	index1, index2, index3 = 0, 0, 0
-	foundZ1LCandidate = False
+	index1, index2  = 0, 0
+	foundZCandidate = False
 
-	Wmass = 81
-	mZ1Low = 4.0
-	mZ1High = 81.0
+	Zmass = 91.2
+	mZ1Low = 8.0
+	mZ1High = 91.2
 
 	#Find Z' candidate
 	n_Zs=0
@@ -147,7 +159,7 @@ for ev in tqdm(range(len(nMuon))):
 				Z_Z1L_lepindex2.append(j)
 
 	#Find best Z' candidate
-	minZ1Mass = 999.9
+	maxZ1Mass = 0.0
 	for i in range(n_Zs):
 		i1, i2 = Z_Z1L_lepindex1[i], Z_Z1L_lepindex2[i]
 
@@ -169,62 +181,55 @@ for ev in tqdm(range(len(nMuon))):
 		if lep_med[ev][i1] != 1 or lep_med[ev][i2] != 1: continue
 		if Z1Mass < mZ1Low or Z1Mass > mZ1High: continue
 
-		if (Z1Mass > minZ1Mass): continue
-		for lep in range(nMuon[ev]):
-			if(lep==i1 or lep==i2): continue
-			if abs(lep_id[ev][lep])!=13: continue
-			tempIdx = lep
+		if (Z1Mass < maxZ1Mass): continue
 
-			#if lep_pt[ev][tempIdx] < leadingPtCut: continue
-			if lep_iso[ev][tempIdx] > iso_cut: continue
-			if lep_med[ev][tempIdx] != 1: continue
 
-			temp = TLorentzVector()
-			temp.SetPtEtaPhiM(lep_pt[ev][tempIdx],lep_eta[ev][tempIdx],lep_phi[ev][tempIdx],lep_mass[ev][tempIdx])
 
-			Leps3 = lep_i1 + lep_i2 + temp
-			Leps3_M = Leps3.M()
-			if (Leps3_M > Wmass): continue
 
-			leading, subleading, trailing = Z1_lepindex[0], Z1_lepindex[1], lep
-			if lep_pt[ev][Z1_lepindex[0]] < lep_pt[ev][lep]:
-				leading = lep
-				subleading = Z1_lepindex[0]
-				trailing = Z1_lepindex[1]
-			elif lep_pt[ev][Z1_lepindex[1]] < lep_pt[ev][lep]:
-				subleading = lep
-				trailing = Z1_lepindex[1]
-			if (lep_pt[ev][leading] < leadingPtCut or lep_pt[ev][subleading] < subleadingPtCut or lep_pt[ev][trailing] < trailingPtCut): continue
 
-			minZ1Mass = Z1Mass
-			index1 = Z1_lepindex[0]
-			index2 = Z1_lepindex[1]
-			index3 = lep
-			foundZ1LCandidate=True
-			break
 
-	if not foundZ1LCandidate: selection[ev]=False
+
+
+
+
+
+
+
+
+
+                leading, subleading  = Z1_lepindex[0], Z1_lepindex[1]
+                if lep_pt[ev][Z1_lepindex[0]] < lep_pt[ev][Z1_lepindex[1]]:
+                        leading = Z1_lepindex[1]
+                        subleading = Z1_lepindex[0]
+                        
+			
+			
+			
+                if (lep_pt[ev][leading] < leadingPtCut or lep_pt[ev][subleading] < subleadingPtCut): continue
+
+                maxZ1Mass = Z1Mass
+                index1 = Z1_lepindex[0]
+                index2 = Z1_lepindex[1]
+                foundZCandidate=True
+               
+
+	if not foundZCandidate: selection[ev]=False
 	if not selection[ev]: continue
 
 	lep1 = TLorentzVector()
 	lep2 = TLorentzVector()
-	lep3 = TLorentzVector()
+        lep3 = TLorentzVector()
 
-	indexes = [index1,index2,index3]
-	sorter = np.array([0,0,0])
+	indexes = [index1,index2]
+	sorter = np.array([0,0])
 	if sort_by=="pt":
-		sorter = np.array([lep_pt[ev][index1],lep_pt[ev][index2],lep_pt[ev][index3]])
-	elif sort_by=="iso":
-		sorter = np.array([lep_iso[ev][index1],lep_iso[ev][index2],lep_iso[ev][index3]])
-	elif sort_by=="ip":
-		sorter = np.array([lep_ip[ev][index1],lep_ip[ev][index2],lep_ip[ev][index3]])
-	elif sort_by=="sip":
-		sorter = np.array([lep_sip[ev][index1],lep_sip[ev][index2],lep_sip[ev][index3]])
+		sorter = np.array([lep_pt[ev][index1],lep_pt[ev][index2]])
+
 
 	done_sort = np.argsort(sorter)
-	index1 = indexes[done_sort[2]]
-	index2 = indexes[done_sort[1]]
-	index3 = indexes[done_sort[0]]
+	index1 = indexes[done_sort[1]]
+	index2 = indexes[done_sort[0]]
+
 
 	#Order muons by pT
 	#leading = index1
@@ -244,12 +249,14 @@ for ev in tqdm(range(len(nMuon))):
 	#Create lepton vectors
 	lep1.SetPtEtaPhiM(lep_pt[ev][index1],lep_eta[ev][index1],lep_phi[ev][index1],lep_mass[ev][index1])
 	lep2.SetPtEtaPhiM(lep_pt[ev][index2],lep_eta[ev][index2],lep_phi[ev][index2],lep_mass[ev][index2])
-	lep3.SetPtEtaPhiM(lep_pt[ev][index3],lep_eta[ev][index3],lep_phi[ev][index3],lep_mass[ev][index3])
-	
-	threeleps = lep1+lep2+lep3
+        lep3.SetPtEtaPhiM(lep_pt[ev][index2],lep_eta[ev][index2],lep_phi[ev][index2],lep_mass[ev][index2])
+	twolep = lep1 + lep2 
+
 	Met = TLorentzVector()
 	Met.SetPtEtaPhiM(MET[ev],0,MET_phi[ev],0)
 	
+        index3 = index2 
+
 	ot.idL1[0], ot.idL2[0], ot.idL3[0] = lep_id[ev][index1], lep_id[ev][index2], lep_id[ev][index3]
 	ot.pTL1[0], ot.pTL2[0], ot.pTL3[0] = lep1.Pt(), lep2.Pt(), lep3.Pt()
 	ot.etaL1[0], ot.etaL2[0], ot.etaL3[0] = lep1.Eta(), lep2.Eta(), lep3.Eta()
@@ -269,8 +276,9 @@ for ev in tqdm(range(len(nMuon))):
 	#ot.nElectrons[0] = t.nElectron
 	ot.nMuons[0] = nMuon[ev]
 	#ot.trueL3[0] = trueL3
-	ot.m3l[0] = threeleps.M()
-	ot.mt[0] = (threeleps+Met).M()
+	ot.m2l[0] = twolep.M()
+        ot.m2lT[0] = twolep.Mt()
+	ot.mt[0] = (twolep+Met).M()
 	
 	ot.Run[0] = Run[ev]
 	ot.Event[0] = Event[ev]
